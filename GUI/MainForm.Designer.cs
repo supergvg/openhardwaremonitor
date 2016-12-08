@@ -89,6 +89,8 @@ namespace OpenHardwareMonitor.GUI {
       this.runWebServerMenuItem = new System.Windows.Forms.MenuItem();
       this.serverPortMenuItem = new System.Windows.Forms.MenuItem();
       this.logSensorsMenuItem = new System.Windows.Forms.MenuItem();
+      this.menuItem4 = new System.Windows.Forms.MenuItem();
+      this.selectConfigPathMenuItem = new System.Windows.Forms.MenuItem();
       this.helpMenuItem = new System.Windows.Forms.MenuItem();
       this.aboutMenuItem = new System.Windows.Forms.MenuItem();
       this.treeContextMenu = new System.Windows.Forms.ContextMenu();
@@ -374,7 +376,9 @@ namespace OpenHardwareMonitor.GUI {
             this.logSensorsMenuItem,
             this.loggingIntervalMenuItem,
             this.webMenuItemSeparator,
-            this.webMenuItem});
+            this.webMenuItem,
+            this.menuItem4,
+            this.selectConfigPathMenuItem});
       this.optionsMenuItem.Text = "Options";
       // 
       // startMinMenuItem
@@ -561,6 +565,17 @@ namespace OpenHardwareMonitor.GUI {
       this.treeView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseMove);
       this.treeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseUp);
       // 
+      // menuItem4
+      // 
+      this.menuItem4.Index = 12;
+      this.menuItem4.Text = "-";
+      // 
+      // selectConfigPathMenuItem
+      // 
+      this.selectConfigPathMenuItem.Index = 13;
+      this.selectConfigPathMenuItem.Text = "Select Save Config Path ...";
+      this.selectConfigPathMenuItem.Click += new System.EventHandler(this.selectConfigPathMenuItem_Click);
+	  // 
       // logSeparatorMenuItem
       // 
       this.logSeparatorMenuItem.Index = 7;
@@ -762,6 +777,8 @@ namespace OpenHardwareMonitor.GUI {
     private System.Windows.Forms.MenuItem log1hMenuItem;
     private System.Windows.Forms.MenuItem log2hMenuItem;
     private System.Windows.Forms.MenuItem log6hMenuItem;
+    private System.Windows.Forms.MenuItem menuItem4;
+    private System.Windows.Forms.MenuItem selectConfigPathMenuItem;
   }
 }
 
