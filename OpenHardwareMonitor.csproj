@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,9 +7,10 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>WinExe</OutputType>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>OpenHardwareMonitor</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>OpenHardwareMonitor</RootNamespace>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
@@ -34,6 +35,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +48,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -56,24 +59,19 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OxyPlot">
-      <HintPath>External\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.WindowsForms">
-      <HintPath>External\OxyPlot.WindowsForms.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>External\Aga.Controls.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\GadgetWindow.cs" />
@@ -177,7 +175,7 @@
     <EmbeddedResource Include="Resources\nvidia.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="packages.config" />
     <None Include="Resources\app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -209,6 +207,18 @@
     <EmbeddedResource Include="Resources\control.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="External\Aga.Controls\Aga.Controls.csproj">
+      <Project>{e73bb233-d88b-44a7-a98f-d71ee158381d}</Project>
+      <Name>Aga.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="External\OxyPlot\OxyPlot.WindowsForms\OxyPlot.WindowsForms.csproj">
+      <Project>{d4554296-094e-4cac-8eae-44eb250666c6}</Project>
+      <Name>OxyPlot.WindowsForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="External\OxyPlot\OxyPlot\OxyPlot.csproj">
+      <Project>{bcc43e58-e473-403e-a84d-63fedc723040}</Project>
+      <Name>OxyPlot</Name>
+    </ProjectReference>
     <ProjectReference Include="OpenHardwareMonitorLib.csproj">
       <Project>{B0397530-545A-471D-BB74-027AE456DF1A}</Project>
       <Name>OpenHardwareMonitorLib</Name>
@@ -294,6 +304,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\ram.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\acicon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
@@ -301,7 +314,7 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>copy "$(ProjectDir)External\*.*" "$(TargetDir)"
-copy "$(ProjectDir)Licenses\*.*" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

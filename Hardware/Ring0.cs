@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Threading;
 using System.Text;
+using System.Security.Principal;        //SecurityIdentifier
 
 namespace OpenHardwareMonitor.Hardware {
   internal static class Ring0 {
@@ -80,7 +81,7 @@ namespace OpenHardwareMonitor.Hardware {
 
     private static bool ExtractDriver(string fileName) {
       string resourceName = "OpenHardwareMonitor.Hardware." +
-        (OperatingSystem.Is64BitOperatingSystem() ? "WinRing0x64.sys" : 
+        (Software.OperatingSystem.Is64Bit ? "WinRing0x64.sys" : 
         "WinRing0.sys");
 
       string[] names = GetAssembly().GetManifestResourceNames();
@@ -129,9 +130,7 @@ namespace OpenHardwareMonitor.Hardware {
 
     public static void Open() {
       // no implementation for unix systems
-      int p = (int)Environment.OSVersion.Platform;
-      if ((p == 4) || (p == 128))
-        return;  
+      if (Software.OperatingSystem.IsLinux) return;  
       
       if (driver != null)
         return;
@@ -199,11 +198,25 @@ namespace OpenHardwareMonitor.Hardware {
 
       string mutexName = "Global\\Access_ISABUS.HTP.Method";
       try {
+#if NETSTANDARD2_0
         isaBusMutex = new Mutex(false, mutexName);
-      } catch (UnauthorizedAccessException) {
+#else
+        //mutex permissions set to everyone to allow other software to access the hardware
+        //otherwise other monitoring software cant access
+        var allowEveryoneRule = new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
+        var securitySettings = new MutexSecurity();
+        securitySettings.AddAccessRule(allowEveryoneRule);
+        isaBusMutex = new Mutex(false, mutexName, out _, securitySettings);
+#endif
+      }
+      catch (UnauthorizedAccessException) {
         try {
+#if NETSTANDARD2_0
+          isaBusMutex = Mutex.OpenExisting(mutexName);
+#else
           isaBusMutex = Mutex.OpenExisting(mutexName, MutexRights.Synchronize);
-        } catch { }
+#endif
+                } catch { }
       }
     }
 
@@ -212,18 +225,15 @@ namespace OpenHardwareMonitor.Hardware {
     }
 
     public static void Close() {
-      if (driver == null)
-        return;
-
-      uint refCount = 0;
-      driver.DeviceIOControl(IOCTL_OLS_GET_REFCOUNT, null, ref refCount);
-
-      driver.Close();
-
-      if (refCount <= 1)
-        driver.Delete();
-
-      driver = null;
+      if (driver != null){
+        uint refCount = 0;
+        driver.DeviceIOControl(IOCTL_OLS_GET_REFCOUNT, null, ref refCount);
+        driver.Close();
+       
+        if (refCount <= 1)
+          driver.Delete();
+        driver = null;
+      }
 
       if (isaBusMutex != null) {
         isaBusMutex.Close();
@@ -238,6 +248,10 @@ namespace OpenHardwareMonitor.Hardware {
         } catch (IOException) { } 
           catch (UnauthorizedAccessException) { }
       }
+    }
+    public static ulong ThreadAffinitySet(ulong mask)
+    {
+      return ThreadAffinity.Set(mask);
     }
 
     public static string GetReport() {
